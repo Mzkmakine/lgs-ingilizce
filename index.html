@@ -852,6 +852,23 @@ function renderDashboard() {
   document.getElementById('overall-bar').style.width=pct+'%';
   document.getElementById('stat-vocab').textContent='Kelime: '+learned+'/'+total;
   document.getElementById('menu-word-count').textContent=total+' kelime';
+
+  // Quiz stats
+  var quizScores=DB.get('quizScores',{});
+  var qVals=Object.values(quizScores);
+  if(qVals.length>0){
+    var qSum=0;for(var qi=0;qi<qVals.length;qi++)qSum+=qVals[qi].pct;
+    document.getElementById('stat-quiz').textContent='Quiz: %'+Math.round(qSum/qVals.length);
+  }
+
+  // Pattern stats
+  var totalPat=0,learnedPat=0;
+  UNITS.forEach(function(u){var p=getPatterns(u.id);totalPat+=p.length;learnedPat+=getLearnedPatternCount(u.id)});
+  document.getElementById('stat-pattern').textContent='Kalıp: '+learnedPat;
+
+  // Reading stats
+  var readScores=DB.get('readScores',{});
+  document.getElementById('stat-reading').textContent='Okuma: '+Object.keys(readScores).length;
 }
 
 // ===== RENDER UNITS =====
@@ -2446,7 +2463,7 @@ function renderArchive() {
 
 function collectData() {
   var data = {};
-  var keys = ['words','patterns','streak','fc_today','gramScores','readScores'];
+  var keys = ['words','patterns','streak','fc_today','gramScores','readScores','quizScores'];
   keys.forEach(function(k) {
     var val = DB.get(k, null);
     if (val !== null) data[k] = val;
@@ -2539,7 +2556,7 @@ function restoreData(data) {
   }
 
   var restored = 0;
-  var keys = ['words','patterns','streak','fc_today','gramScores','readScores'];
+  var keys = ['words','patterns','streak','fc_today','gramScores','readScores','quizScores'];
   keys.forEach(function(k) {
     if (data[k]) { DB.set(k, data[k]); restored++; }
   });
@@ -2573,7 +2590,7 @@ function confirmReset() {
 }
 
 function resetAllData() {
-  var keys = ['words','patterns','streak','fc_today','gramScores','readScores'];
+  var keys = ['words','patterns','streak','fc_today','gramScores','readScores','quizScores'];
   keys.forEach(function(k) {
     try { localStorage.removeItem('lgs_eng_' + k); } catch(e) {}
   });
@@ -2795,6 +2812,12 @@ function renderQSummary(){
   stopQTimer();
   var total=qCorrect+qWrong,pctC=total>0?Math.round(qCorrect/total*100):0;
   addTodayReviewed(total);
+  // Save quiz score to localStorage
+  var quizScores=DB.get('quizScores',{});
+  var qKey='u'+qUnit+'_'+Date.now();
+  quizScores[qKey]={unit:qUnit,correct:qCorrect,total:total,pct:pctC,mode:qMode,date:new Date().toISOString()};
+  DB.set('quizScores',quizScores);
+  renderDashboard();
   var resHTML='';
   if(qMode==='exam'){
     resHTML='<div style="text-align:left;width:100%;margin-top:12px"><div style="font-size:14px;font-weight:700;margin-bottom:10px">Soru Analizi</div>';
