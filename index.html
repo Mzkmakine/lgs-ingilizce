@@ -3218,79 +3218,79 @@ function showToast(m){const t=document.getElementById('toast');t.textContent=m;t
 var PRACTICE_TOPICS=[
 {id:'meeting',icon:'🤝',title:'Tanışma',sub:'İsim, yaş, hobi, ülke',
  flow:[
-  {ai:"Hello! What's your name?",accept:[/my name is .+/i,/i'?m .+/i,/i am .+/i],hint:"My name is ... / I'm ...",errTr:"İsminizi söylemelisiniz. 'My name is Ali' veya 'I'm Ali' diyebilirsiniz."},
-  {ai:"Nice to meet you! How old are you?",accept:[/i'?m \d+/i,/i am \d+/i,/\d+ years old/i],hint:"I'm 14 / I am 14 years old",errTr:"Yaşınızı söyleyin. 'I'm 14' veya 'I am 14 years old' diyebilirsiniz."},
-  {ai:"Where are you from?",accept:[/i'?m from .+/i,/i am from .+/i,/i come from .+/i],hint:"I'm from Turkey / I come from ...",errTr:"Nereli olduğunuzu söyleyin. 'I'm from Turkey' diyebilirsiniz."},
-  {ai:"What do you like doing in your free time?",accept:[/i like .+ing/i,/i enjoy .+/i,/i love .+/i,/my hobby is/i,/my hobbies are/i],hint:"I like playing football / I enjoy reading",errTr:"Hobinizi söyleyin. 'I like playing football' veya 'I enjoy reading books' diyebilirsiniz."},
-  {ai:"Do you have any brothers or sisters?",accept:[/i have .+ (brother|sister|sibling)/i,/yes.*(i have|i do)/i,/no.*(i don'?t|i do not)/i,/i'?m an only child/i],hint:"Yes, I have a brother / No, I don't",errTr:"Kardeşiniz olup olmadığını söyleyin. 'I have one brother' veya 'No, I don't' diyebilirsiniz."},
-  {ai:"What's your favorite subject at school?",accept:[/my favorite .+ is .+/i,/i like .+/i,/i love .+/i,/it'?s .+/i],hint:"My favorite subject is English / I like math",errTr:"En sevdiğiniz dersi söyleyin. 'My favorite subject is English' diyebilirsiniz."},
-  {ai:"It was great talking to you! See you later!",accept:[/see you/i,/bye/i,/goodbye/i,/nice .+ you/i,/it was nice/i,/take care/i],hint:"See you later! / Nice talking to you too!",errTr:"Vedalaşın. 'See you later!' veya 'Goodbye!' diyebilirsiniz."}
+  {ai:"Hello! What's your name?",accept:[/my name is .+/i,/i'?m .+/i,/i am .+/i],hint:"My name is ... / I'm ...",errTr:"İsminizi söylemelisiniz. «My name is Ali» veya «I'm Ali» diyebilirsiniz."},
+  {ai:"Nice to meet you! How old are you?",accept:[/i'?m \d+/i,/i am \d+/i,/\d+ years old/i],hint:"I'm 14 / I am 14 years old",errTr:"Yaşınızı söyleyin. «I'm 14» veya «I am 14 years old» diyebilirsiniz."},
+  {ai:"Where are you from?",accept:[/i'?m from .+/i,/i am from .+/i,/i come from .+/i],hint:"I'm from Turkey / I come from ...",errTr:"Nereli olduğunuzu söyleyin. «I'm from Turkey» diyebilirsiniz."},
+  {ai:"What do you like doing in your free time?",accept:[/i like .+ing/i,/i enjoy .+/i,/i love .+/i,/my hobby is/i,/my hobbies are/i],hint:"I like playing football / I enjoy reading",errTr:"Hobinizi söyleyin. «I like playing football» veya «I enjoy reading books» diyebilirsiniz."},
+  {ai:"Do you have any brothers or sisters?",accept:[/i have .+ (brother|sister|sibling)/i,/yes.*(i have|i do)/i,/no.*(i don'?t|i do not)/i,/i'?m an only child/i],hint:"Yes, I have a brother / No, I don't",errTr:"Kardeşiniz olup olmadığını söyleyin. «I have one brother» veya «No, I don't» diyebilirsiniz."},
+  {ai:"What's your favorite subject at school?",accept:[/my favorite .+ is .+/i,/i like .+/i,/i love .+/i,/it'?s .+/i],hint:"My favorite subject is English / I like math",errTr:"En sevdiğiniz dersi söyleyin. «My favorite subject is English» diyebilirsiniz."},
+  {ai:"It was great talking to you! See you later!",accept:[/see you/i,/bye/i,/goodbye/i,/nice .+ you/i,/it was nice/i,/take care/i],hint:"See you later! / Nice talking to you too!",errTr:"Vedalaşın. «See you later!» veya «Goodbye!» diyebilirsiniz."}
 ]},
 {id:'daily',icon:'☀️',title:'Günlük Yaşam',sub:'Rutin, hava, zaman',
  flow:[
-  {ai:"Good morning! How are you today?",accept:[/i'?m (fine|good|great|okay|well)/i,/i am (fine|good|great)/i,/not bad/i,/pretty good/i],hint:"I'm fine, thank you / I'm great!",errTr:"Nasıl olduğunuzu söyleyin. 'I'm fine, thank you' veya 'I'm great!' diyebilirsiniz."},
-  {ai:"What time do you usually wake up?",accept:[/i (wake up|get up) at .+/i,/at \d+/i,/around \d+/i],hint:"I wake up at 7 o'clock / I get up at 7:30",errTr:"Kaçta kalktığınızı söyleyin. 'I wake up at 7 o'clock' diyebilirsiniz."},
-  {ai:"What do you have for breakfast?",accept:[/i (have|eat|drink) .+/i,/i usually .+/i],hint:"I have bread and cheese / I usually eat cereal",errTr:"Kahvaltıda ne yediğinizi söyleyin. 'I have bread and cheese for breakfast' diyebilirsiniz."},
-  {ai:"How do you go to school?",accept:[/i (go|walk|take|ride|travel) .+/i,/by (bus|car|bike|foot|train)/i,/on foot/i],hint:"I go by bus / I walk to school",errTr:"Okula nasıl gittiğinizi söyleyin. 'I go to school by bus' veya 'I walk to school' diyebilirsiniz."},
-  {ai:"What's the weather like today?",accept:[/it'?s (sunny|rainy|cloudy|cold|hot|warm|windy|snowy)/i,/it is .+/i,/the weather is .+/i],hint:"It's sunny / It's cold and rainy today",errTr:"Havayı tarif edin. 'It's sunny today' veya 'It's cold and cloudy' diyebilirsiniz."},
-  {ai:"What do you do after school?",accept:[/i (do|play|watch|read|study|go|have|practice) .+/i,/i usually .+/i,/after school.+i .+/i],hint:"I do my homework / I play football",errTr:"Okuldan sonra ne yaptığınızı söyleyin. 'I do my homework' veya 'I play football' diyebilirsiniz."},
-  {ai:"What time do you go to bed?",accept:[/i go to bed at .+/i,/at \d+/i,/around \d+/i,/i sleep at/i],hint:"I go to bed at 10 o'clock",errTr:"Kaçta yattığınızı söyleyin. 'I go to bed at 10 o'clock' diyebilirsiniz."}
+  {ai:"Good morning! How are you today?",accept:[/i'?m (fine|good|great|okay|well)/i,/i am (fine|good|great)/i,/not bad/i,/pretty good/i],hint:"I'm fine, thank you / I'm great!",errTr:"Nasıl olduğunuzu söyleyin. «I'm fine, thank you» veya «I'm great!» diyebilirsiniz."},
+  {ai:"What time do you usually wake up?",accept:[/i (wake up|get up) at .+/i,/at \d+/i,/around \d+/i],hint:"I wake up at 7 o'clock / I get up at 7:30",errTr:"Kaçta kalktığınızı söyleyin. «I wake up at 7 o'clock» diyebilirsiniz."},
+  {ai:"What do you have for breakfast?",accept:[/i (have|eat|drink) .+/i,/i usually .+/i],hint:"I have bread and cheese / I usually eat cereal",errTr:"Kahvaltıda ne yediğinizi söyleyin. «I have bread and cheese for breakfast» diyebilirsiniz."},
+  {ai:"How do you go to school?",accept:[/i (go|walk|take|ride|travel) .+/i,/by (bus|car|bike|foot|train)/i,/on foot/i],hint:"I go by bus / I walk to school",errTr:"Okula nasıl gittiğinizi söyleyin. «I go to school by bus» veya «I walk to school» diyebilirsiniz."},
+  {ai:"What's the weather like today?",accept:[/it'?s (sunny|rainy|cloudy|cold|hot|warm|windy|snowy)/i,/it is .+/i,/the weather is .+/i],hint:"It's sunny / It's cold and rainy today",errTr:"Havayı tarif edin. «It's sunny today» veya «It's cold and cloudy» diyebilirsiniz."},
+  {ai:"What do you do after school?",accept:[/i (do|play|watch|read|study|go|have|practice) .+/i,/i usually .+/i,/after school.+i .+/i],hint:"I do my homework / I play football",errTr:"Okuldan sonra ne yaptığınızı söyleyin. «I do my homework» veya «I play football» diyebilirsiniz."},
+  {ai:"What time do you go to bed?",accept:[/i go to bed at .+/i,/at \d+/i,/around \d+/i,/i sleep at/i],hint:"I go to bed at 10 o'clock",errTr:"Kaçta yattığınızı söyleyin. «I go to bed at 10 o'clock» diyebilirsiniz."}
 ]},
 {id:'travel',icon:'✈️',title:'Seyahat',sub:'Bilet, yol tarifi, otel',
  flow:[
-  {ai:"Welcome to the travel agency! Where would you like to go?",accept:[/i (want|would like|'d like) to go to .+/i,/i want to visit .+/i,/to .+/i],hint:"I'd like to go to London / I want to visit Paris",errTr:"Nereye gitmek istediğinizi söyleyin. 'I'd like to go to London' diyebilirsiniz."},
-  {ai:"When do you want to travel?",accept:[/in (january|february|march|april|may|june|july|august|september|october|november|december)/i,/next (week|month|summer|winter)/i,/on .+/i,/this .+/i],hint:"Next summer / In July / This weekend",errTr:"Ne zaman seyahat etmek istediğinizi söyleyin. 'Next summer' veya 'In July' diyebilirsiniz."},
-  {ai:"Would you like a single or return ticket?",accept:[/a? ?(single|return|one.?way|round.?trip)/i,/i'?d like a? ?(single|return)/i],hint:"A return ticket, please / I'd like a round trip",errTr:"Tek yön mü gidiş-dönüş mü istediğinizi söyleyin. 'A return ticket, please' diyebilirsiniz."},
-  {ai:"How many nights will you stay?",accept:[/\d+ night/i,/for \d+ (day|night|week)/i,/a week/i,/one week/i],hint:"Three nights / For a week",errTr:"Kaç gece kalacağınızı söyleyin. 'Three nights' veya 'For a week' diyebilirsiniz."},
-  {ai:"Do you need a hotel recommendation?",accept:[/yes/i,/no/i,/please/i,/sure/i,/that would be/i,/i do/i,/i don'?t/i],hint:"Yes, please / No, thank you",errTr:"'Yes, please' veya 'No, thank you' diyebilirsiniz."},
-  {ai:"Is there anything else I can help you with?",accept:[/no.*(thank|that)/i,/that'?s (all|it)/i,/nothing/i,/yes/i,/i need/i,/can you/i],hint:"No, that's all. Thank you! / That's it, thanks!",errTr:"'No, that's all. Thank you!' veya 'That's it, thanks!' diyebilirsiniz."}
+  {ai:"Welcome to the travel agency! Where would you like to go?",accept:[/i (want|would like|'d like) to go to .+/i,/i want to visit .+/i,/to .+/i],hint:"I'd like to go to London / I want to visit Paris",errTr:"Nereye gitmek istediğinizi söyleyin. «I'd like to go to London» diyebilirsiniz."},
+  {ai:"When do you want to travel?",accept:[/in (january|february|march|april|may|june|july|august|september|october|november|december)/i,/next (week|month|summer|winter)/i,/on .+/i,/this .+/i],hint:"Next summer / In July / This weekend",errTr:"Ne zaman seyahat etmek istediğinizi söyleyin. «Next summer» veya «In July» diyebilirsiniz."},
+  {ai:"Would you like a single or return ticket?",accept:[/a? ?(single|return|one.?way|round.?trip)/i,/i'?d like a? ?(single|return)/i],hint:"A return ticket, please / I'd like a round trip",errTr:"Tek yön mü gidiş-dönüş mü istediğinizi söyleyin. «A return ticket, please» diyebilirsiniz."},
+  {ai:"How many nights will you stay?",accept:[/\d+ night/i,/for \d+ (day|night|week)/i,/a week/i,/one week/i],hint:"Three nights / For a week",errTr:"Kaç gece kalacağınızı söyleyin. «Three nights» veya «For a week» diyebilirsiniz."},
+  {ai:"Do you need a hotel recommendation?",accept:[/yes/i,/no/i,/please/i,/sure/i,/that would be/i,/i do/i,/i don'?t/i],hint:"Yes, please / No, thank you",errTr:"'Yes, please' veya «No, thank you» diyebilirsiniz."},
+  {ai:"Is there anything else I can help you with?",accept:[/no.*(thank|that)/i,/that'?s (all|it)/i,/nothing/i,/yes/i,/i need/i,/can you/i],hint:"No, that's all. Thank you! / That's it, thanks!",errTr:"'No, that's all. Thank you!« veya 'That's it, thanks!» diyebilirsiniz."}
 ]},
 {id:'restaurant',icon:'🍽️',title:'Restoran',sub:'Sipariş, menü, hesap',
  flow:[
-  {ai:"Good evening! Welcome to our restaurant. Table for how many?",accept:[/for (one|two|three|four|\d+)/i,/table for (one|two|three|\d+)/i,/just (me|one|myself)/i,/(one|two|three|four|\d+) (people|person)/i],hint:"Table for two, please / For two people",errTr:"Kaç kişilik masa istediğinizi söyleyin. 'Table for two, please' diyebilirsiniz."},
-  {ai:"Here's the menu. Are you ready to order?",accept:[/yes/i,/i'?d like/i,/can i (have|get|order)/i,/i (want|will have)/i,/not yet/i,/a (few|couple) (more )?minute/i],hint:"Yes, I'd like to order / Can I have a few more minutes?",errTr:"Sipariş vermeye hazır mısınız söyleyin. 'Yes, I'd like to order' veya 'Can I have a few more minutes?' diyebilirsiniz."},
-  {ai:"What would you like to eat?",accept:[/i'?d like .+/i,/i (want|will have|'ll have) .+/i,/can i (have|get) .+/i],hint:"I'd like a hamburger / Can I have pasta, please?",errTr:"Ne yemek istediğinizi söyleyin. 'I'd like a hamburger' veya 'Can I have pasta, please?' diyebilirsiniz."},
-  {ai:"And what would you like to drink?",accept:[/i'?d like .+/i,/can i (have|get) .+/i,/i (want|will have|'ll have) .+/i,/(water|juice|cola|tea|coffee|milk|lemonade)/i],hint:"I'd like orange juice / Can I have water, please?",errTr:"Ne içmek istediğinizi söyleyin. 'I'd like orange juice' veya 'Water, please' diyebilirsiniz."},
-  {ai:"How is your food? Is everything okay?",accept:[/it'?s (delicious|great|good|wonderful|nice|amazing|perfect|very good)/i,/yes.*(it'?s|everything)/i,/very (good|nice|tasty)/i,/i (like|love|enjoy) it/i],hint:"It's delicious, thank you! / Everything is great!",errTr:"Yemek hakkında yorum yapın. 'It's delicious, thank you!' veya 'Everything is great!' diyebilirsiniz."},
-  {ai:"Would you like any dessert?",accept:[/yes/i,/no/i,/i'?d like .+/i,/can i have .+/i,/no.*(thank|i'?m full)/i],hint:"Yes, I'd like chocolate cake / No, thank you. I'm full.",errTr:"Tatlı isteyip istemediğinizi söyleyin. 'Yes, I'd like chocolate cake' veya 'No, thank you. I'm full' diyebilirsiniz."},
-  {ai:"Here's your bill. That's 85 liras.",accept:[/here you (go|are)/i,/thank you/i,/thanks/i,/can i pay/i,/by (card|cash|credit)/i,/keep the change/i],hint:"Thank you! / Can I pay by card?",errTr:"Teşekkür edin veya ödeme yöntemi sorun. 'Thank you!' veya 'Can I pay by card?' diyebilirsiniz."}
+  {ai:"Good evening! Welcome to our restaurant. Table for how many?",accept:[/for (one|two|three|four|\d+)/i,/table for (one|two|three|\d+)/i,/just (me|one|myself)/i,/(one|two|three|four|\d+) (people|person)/i],hint:"Table for two, please / For two people",errTr:"Kaç kişilik masa istediğinizi söyleyin. «Table for two, please» diyebilirsiniz."},
+  {ai:"Here's the menu. Are you ready to order?",accept:[/yes/i,/i'?d like/i,/can i (have|get|order)/i,/i (want|will have)/i,/not yet/i,/a (few|couple) (more )?minute/i],hint:"Yes, I'd like to order / Can I have a few more minutes?",errTr:"Sipariş vermeye hazır mısınız söyleyin. «Yes, I'd like to order» veya «Can I have a few more minutes?» diyebilirsiniz."},
+  {ai:"What would you like to eat?",accept:[/i'?d like .+/i,/i (want|will have|'ll have) .+/i,/can i (have|get) .+/i],hint:"I'd like a hamburger / Can I have pasta, please?",errTr:"Ne yemek istediğinizi söyleyin. «I'd like a hamburger» veya «Can I have pasta, please?» diyebilirsiniz."},
+  {ai:"And what would you like to drink?",accept:[/i'?d like .+/i,/can i (have|get) .+/i,/i (want|will have|'ll have) .+/i,/(water|juice|cola|tea|coffee|milk|lemonade)/i],hint:"I'd like orange juice / Can I have water, please?",errTr:"Ne içmek istediğinizi söyleyin. «I'd like orange juice» veya «Water, please» diyebilirsiniz."},
+  {ai:"How is your food? Is everything okay?",accept:[/it'?s (delicious|great|good|wonderful|nice|amazing|perfect|very good)/i,/yes.*(it'?s|everything)/i,/very (good|nice|tasty)/i,/i (like|love|enjoy) it/i],hint:"It's delicious, thank you! / Everything is great!",errTr:"Yemek hakkında yorum yapın. «It's delicious, thank you!» veya «Everything is great!» diyebilirsiniz."},
+  {ai:"Would you like any dessert?",accept:[/yes/i,/no/i,/i'?d like .+/i,/can i have .+/i,/no.*(thank|i'?m full)/i],hint:"Yes, I'd like chocolate cake / No, thank you. I'm full.",errTr:"Tatlı isteyip istemediğinizi söyleyin. «Yes, I'd like chocolate cake» veya «No, thank you. I'm full» diyebilirsiniz."},
+  {ai:"Here's your bill. That's 85 liras.",accept:[/here you (go|are)/i,/thank you/i,/thanks/i,/can i pay/i,/by (card|cash|credit)/i,/keep the change/i],hint:"Thank you! / Can I pay by card?",errTr:"Teşekkür edin veya ödeme yöntemi sorun. «Thank you!» veya «Can I pay by card?» diyebilirsiniz."}
 ]},
 {id:'cafe',icon:'☕',title:'Kafe',sub:'İçecek siparişi, sohbet',
  flow:[
-  {ai:"Hi! Welcome to the café. What can I get you?",accept:[/i'?d like .+/i,/can i (have|get) .+/i,/i (want|will have|'ll have) .+/i,/a (coffee|tea|latte|cappuccino|hot chocolate)/i],hint:"I'd like a coffee, please / Can I have a latte?",errTr:"Ne içmek istediğinizi söyleyin. 'I'd like a coffee, please' diyebilirsiniz."},
-  {ai:"What size would you like? Small, medium, or large?",accept:[/(small|medium|large|big)/i,/a (small|medium|large)/i],hint:"Medium, please / I'd like a large one",errTr:"Boyut seçin. 'Medium, please' veya 'Large, please' diyebilirsiniz."},
-  {ai:"Would you like anything to eat with that?",accept:[/yes/i,/no/i,/a (cake|cookie|sandwich|muffin|croissant|brownie)/i,/i'?d like .+/i,/no.*(thank|i'?m)/i],hint:"Yes, a chocolate muffin / No, just the drink, thanks",errTr:"Yanında yemek ister misiniz? 'A chocolate muffin, please' veya 'No, thanks' diyebilirsiniz."},
-  {ai:"For here or to go?",accept:[/for here/i,/to go/i,/take ?away/i,/here/i,/i'?ll (sit|stay|eat) here/i],hint:"For here, please / To go, please",errTr:"Burada mı yoksa paket mi? 'For here, please' veya 'To go, please' diyebilirsiniz."},
-  {ai:"That'll be 45 liras. How would you like to pay?",accept:[/by (card|cash|credit)/i,/(card|cash)/i,/with (card|cash|credit)/i,/here you/i,/credit card/i],hint:"By card, please / Cash, please",errTr:"Ödeme yönteminizi söyleyin. 'By card, please' veya 'Cash, please' diyebilirsiniz."},
-  {ai:"Here's your order. Enjoy!",accept:[/thank/i,/thanks/i,/cheers/i],hint:"Thank you! / Thanks a lot!",errTr:"Teşekkür edin. 'Thank you!' diyebilirsiniz."}
+  {ai:"Hi! Welcome to the café. What can I get you?",accept:[/i'?d like .+/i,/can i (have|get) .+/i,/i (want|will have|'ll have) .+/i,/a (coffee|tea|latte|cappuccino|hot chocolate)/i],hint:"I'd like a coffee, please / Can I have a latte?",errTr:"Ne içmek istediğinizi söyleyin. «I'd like a coffee, please» diyebilirsiniz."},
+  {ai:"What size would you like? Small, medium, or large?",accept:[/(small|medium|large|big)/i,/a (small|medium|large)/i],hint:"Medium, please / I'd like a large one",errTr:"Boyut seçin. «Medium, please» veya «Large, please» diyebilirsiniz."},
+  {ai:"Would you like anything to eat with that?",accept:[/yes/i,/no/i,/a (cake|cookie|sandwich|muffin|croissant|brownie)/i,/i'?d like .+/i,/no.*(thank|i'?m)/i],hint:"Yes, a chocolate muffin / No, just the drink, thanks",errTr:"Yanında yemek ister misiniz? «A chocolate muffin, please» veya «No, thanks» diyebilirsiniz."},
+  {ai:"For here or to go?",accept:[/for here/i,/to go/i,/take ?away/i,/here/i,/i'?ll (sit|stay|eat) here/i],hint:"For here, please / To go, please",errTr:"Burada mı yoksa paket mi? «For here, please» veya «To go, please» diyebilirsiniz."},
+  {ai:"That'll be 45 liras. How would you like to pay?",accept:[/by (card|cash|credit)/i,/(card|cash)/i,/with (card|cash|credit)/i,/here you/i,/credit card/i],hint:"By card, please / Cash, please",errTr:"Ödeme yönteminizi söyleyin. «By card, please» veya «Cash, please» diyebilirsiniz."},
+  {ai:"Here's your order. Enjoy!",accept:[/thank/i,/thanks/i,/cheers/i],hint:"Thank you! / Thanks a lot!",errTr:"Teşekkür edin. «Thank you!» diyebilirsiniz."}
 ]},
 {id:'customs',icon:'🛃',title:'Gümrük',sub:'Pasaport, vize, beyan',
  flow:[
-  {ai:"Good morning. Passport, please.",accept:[/here (you go|you are|it is)/i,/here/i,/sure/i,/of course/i],hint:"Here you go / Here it is",errTr:"Pasaportunuzu verin. 'Here you go' veya 'Here it is' diyebilirsiniz."},
-  {ai:"What is the purpose of your visit?",accept:[/i'?m here (for|on) .+/i,/(holiday|vacation|tourism|business|study|visit)/i,/i'?m (a tourist|visiting|traveling)/i,/for (holiday|business|study)/i],hint:"I'm here on holiday / For tourism / I'm visiting my family",errTr:"Ziyaret amacınızı söyleyin. 'I'm here on holiday' veya 'For tourism' diyebilirsiniz."},
-  {ai:"How long will you be staying?",accept:[/\d+ (day|week|month|night)/i,/for \d+/i,/a (week|month|few days)/i,/(two|three|four|five|six|seven)/i],hint:"For two weeks / Five days",errTr:"Ne kadar kalacağınızı söyleyin. 'For two weeks' veya 'Five days' diyebilirsiniz."},
-  {ai:"Where will you be staying?",accept:[/at (a|the) .+/i,/in (a|the) .+/i,/(hotel|hostel|friend|family|airbnb)/i,/i'?m staying (at|in|with) .+/i],hint:"At a hotel / I'm staying with my family",errTr:"Nerede kalacağınızı söyleyin. 'At a hotel in the city center' veya 'I'm staying with my family' diyebilirsiniz."},
-  {ai:"Do you have anything to declare?",accept:[/no/i,/nothing/i,/i (don'?t|do not) (have|think so)/i,/yes.+i have/i],hint:"No, nothing to declare / No, I don't",errTr:"Beyan edecek bir şeyiniz var mı? 'No, nothing to declare' diyebilirsiniz."},
-  {ai:"Welcome. Enjoy your stay!",accept:[/thank/i,/thanks/i,/cheers/i],hint:"Thank you very much!",errTr:"Teşekkür edin. 'Thank you very much!' diyebilirsiniz."}
+  {ai:"Good morning. Passport, please.",accept:[/here (you go|you are|it is)/i,/here/i,/sure/i,/of course/i],hint:"Here you go / Here it is",errTr:"Pasaportunuzu verin. «Here you go» veya «Here it is» diyebilirsiniz."},
+  {ai:"What is the purpose of your visit?",accept:[/i'?m here (for|on) .+/i,/(holiday|vacation|tourism|business|study|visit)/i,/i'?m (a tourist|visiting|traveling)/i,/for (holiday|business|study)/i],hint:"I'm here on holiday / For tourism / I'm visiting my family",errTr:"Ziyaret amacınızı söyleyin. «I'm here on holiday» veya «For tourism» diyebilirsiniz."},
+  {ai:"How long will you be staying?",accept:[/\d+ (day|week|month|night)/i,/for \d+/i,/a (week|month|few days)/i,/(two|three|four|five|six|seven)/i],hint:"For two weeks / Five days",errTr:"Ne kadar kalacağınızı söyleyin. «For two weeks» veya «Five days» diyebilirsiniz."},
+  {ai:"Where will you be staying?",accept:[/at (a|the) .+/i,/in (a|the) .+/i,/(hotel|hostel|friend|family|airbnb)/i,/i'?m staying (at|in|with) .+/i],hint:"At a hotel / I'm staying with my family",errTr:"Nerede kalacağınızı söyleyin. «At a hotel in the city center» veya «I'm staying with my family» diyebilirsiniz."},
+  {ai:"Do you have anything to declare?",accept:[/no/i,/nothing/i,/i (don'?t|do not) (have|think so)/i,/yes.+i have/i],hint:"No, nothing to declare / No, I don't",errTr:"Beyan edecek bir şeyiniz var mı? «No, nothing to declare» diyebilirsiniz."},
+  {ai:"Welcome. Enjoy your stay!",accept:[/thank/i,/thanks/i,/cheers/i],hint:"Thank you very much!",errTr:"Teşekkür edin. «Thank you very much!» diyebilirsiniz."}
 ]},
 {id:'airport',icon:'🛫',title:'Havaalanı',sub:'Check-in, uçuş, bagaj',
  flow:[
-  {ai:"Good morning. Can I see your ticket and passport?",accept:[/here (you go|you are|it is|they are)/i,/here/i,/sure/i,/of course/i],hint:"Here you go / Sure, here they are",errTr:"Bilet ve pasaportunuzu verin. 'Here you go' diyebilirsiniz."},
-  {ai:"Would you like a window or an aisle seat?",accept:[/(window|aisle)/i,/i'?d (like|prefer) .*(window|aisle)/i,/a (window|aisle) (seat|one)/i],hint:"A window seat, please / I'd like an aisle seat",errTr:"Pencere mi koridor mu istiyorsunuz? 'A window seat, please' veya 'An aisle seat, please' diyebilirsiniz."},
-  {ai:"How many bags are you checking in?",accept:[/(one|two|three|1|2|3|just one|no bags|none)/i,/i have .+ bag/i],hint:"Just one / Two bags / None, just hand luggage",errTr:"Kaç çanta kayıt ettireceğinizi söyleyin. 'Just one' veya 'Two bags' diyebilirsiniz."},
-  {ai:"Your flight is boarding at Gate B7. Have a nice flight!",accept:[/thank/i,/thanks/i,/which way/i,/where is gate/i,/how do i get/i],hint:"Thank you! / Which way is Gate B7?",errTr:"Teşekkür edin veya kapıyı sorun. 'Thank you!' veya 'Which way is Gate B7?' diyebilirsiniz."},
-  {ai:"Excuse me, the flight is delayed by 30 minutes. Can I get you anything while you wait?",accept:[/no.*(thank|i'?m|that)/i,/a (coffee|water|drink|tea|juice)/i,/can i have/i,/i'?d like/i,/how long/i,/when will/i],hint:"No, thank you / Can I have a coffee? / When will we board?",errTr:"Beklerken bir şey ister misiniz? 'No, thank you' veya 'Can I have a coffee?' diyebilirsiniz."},
-  {ai:"We're now boarding. Please have your boarding pass ready.",accept:[/here (you go|it is)/i,/ok/i,/sure/i,/thank/i,/ready/i],hint:"Here you go / Sure, I'm ready",errTr:"Biniş kartınızı hazırlayın. 'Here you go' veya 'Sure, I'm ready' diyebilirsiniz."}
+  {ai:"Good morning. Can I see your ticket and passport?",accept:[/here (you go|you are|it is|they are)/i,/here/i,/sure/i,/of course/i],hint:"Here you go / Sure, here they are",errTr:"Bilet ve pasaportunuzu verin. «Here you go» diyebilirsiniz."},
+  {ai:"Would you like a window or an aisle seat?",accept:[/(window|aisle)/i,/i'?d (like|prefer) .*(window|aisle)/i,/a (window|aisle) (seat|one)/i],hint:"A window seat, please / I'd like an aisle seat",errTr:"Pencere mi koridor mu istiyorsunuz? «A window seat, please» veya «An aisle seat, please» diyebilirsiniz."},
+  {ai:"How many bags are you checking in?",accept:[/(one|two|three|1|2|3|just one|no bags|none)/i,/i have .+ bag/i],hint:"Just one / Two bags / None, just hand luggage",errTr:"Kaç çanta kayıt ettireceğinizi söyleyin. «Just one» veya «Two bags» diyebilirsiniz."},
+  {ai:"Your flight is boarding at Gate B7. Have a nice flight!",accept:[/thank/i,/thanks/i,/which way/i,/where is gate/i,/how do i get/i],hint:"Thank you! / Which way is Gate B7?",errTr:"Teşekkür edin veya kapıyı sorun. «Thank you!» veya «Which way is Gate B7?» diyebilirsiniz."},
+  {ai:"Excuse me, the flight is delayed by 30 minutes. Can I get you anything while you wait?",accept:[/no.*(thank|i'?m|that)/i,/a (coffee|water|drink|tea|juice)/i,/can i have/i,/i'?d like/i,/how long/i,/when will/i],hint:"No, thank you / Can I have a coffee? / When will we board?",errTr:"Beklerken bir şey ister misiniz? «No, thank you» veya «Can I have a coffee?» diyebilirsiniz."},
+  {ai:"We're now boarding. Please have your boarding pass ready.",accept:[/here (you go|it is)/i,/ok/i,/sure/i,/thank/i,/ready/i],hint:"Here you go / Sure, I'm ready",errTr:"Biniş kartınızı hazırlayın. «Here you go» veya «Sure, I'm ready» diyebilirsiniz."}
 ]},
 {id:'shopping',icon:'🛍️',title:'Mağaza',sub:'Fiyat, beden, ödeme',
  flow:[
-  {ai:"Hello! Can I help you with anything?",accept:[/i'?m looking for .+/i,/yes.*(i need|i'?m looking|i want)/i,/no.*(just looking|browsing|thank)/i,/do you have .+/i],hint:"I'm looking for a T-shirt / Yes, I need a jacket",errTr:"Ne aradığınızı söyleyin. 'I'm looking for a T-shirt' veya 'Just looking, thanks' diyebilirsiniz."},
-  {ai:"What size do you need?",accept:[/(small|medium|large|extra large|xs|s|m|l|xl|xxl)/i,/size \d+/i,/i (need|wear|am) .*(small|medium|large|\d+)/i],hint:"Medium, please / I need size 40 / Large",errTr:"Bedeninizi söyleyin. 'Medium, please' veya 'Size 40' diyebilirsiniz."},
-  {ai:"Here you go. Would you like to try it on?",accept:[/yes/i,/sure/i,/where.*(fitting|changing|dressing)/i,/no/i,/i'?ll take it/i],hint:"Yes, where is the fitting room? / I'll take it",errTr:"Denemek ister misiniz? 'Yes, where is the fitting room?' veya 'I'll take it' diyebilirsiniz."},
-  {ai:"How does it fit?",accept:[/it (fits|looks) .+/i,/it'?s (perfect|great|too big|too small|good|nice)/i,/a bit (big|small|tight|loose)/i,/i (like|love|don'?t like) it/i],hint:"It fits perfectly! / It's a bit too big",errTr:"Nasıl olduğunu söyleyin. 'It fits perfectly!' veya 'It's a bit too small' diyebilirsiniz."},
-  {ai:"How much is this?",accept:[/how much/i,/what'?s the price/i,/is (it|this|that) on sale/i,/any discount/i],hint:"How much is this? / Is there a discount?",errTr:"Fiyatı sorun. 'How much is this?' veya 'Is there a discount?' diyebilirsiniz.",aiFirst:true},
-  {ai:"That's 120 liras. Would you like to buy it?",accept:[/yes/i,/i'?ll take it/i,/no/i,/too expensive/i,/can i pay/i,/by (card|cash)/i],hint:"Yes, I'll take it! / Can I pay by card?",errTr:"Satın almak isteyip istemediğinizi söyleyin. 'Yes, I'll take it!' veya 'Can I pay by card?' diyebilirsiniz."},
-  {ai:"Here's your receipt. Thank you for shopping with us!",accept:[/thank/i,/thanks/i,/bye/i,/goodbye/i],hint:"Thank you! Goodbye!",errTr:"Teşekkür edin. 'Thank you! Goodbye!' diyebilirsiniz."}
+  {ai:"Hello! Can I help you with anything?",accept:[/i'?m looking for .+/i,/yes.*(i need|i'?m looking|i want)/i,/no.*(just looking|browsing|thank)/i,/do you have .+/i],hint:"I'm looking for a T-shirt / Yes, I need a jacket",errTr:"Ne aradığınızı söyleyin. «I'm looking for a T-shirt» veya «Just looking, thanks» diyebilirsiniz."},
+  {ai:"What size do you need?",accept:[/(small|medium|large|extra large|xs|s|m|l|xl|xxl)/i,/size \d+/i,/i (need|wear|am) .*(small|medium|large|\d+)/i],hint:"Medium, please / I need size 40 / Large",errTr:"Bedeninizi söyleyin. «Medium, please» veya «Size 40» diyebilirsiniz."},
+  {ai:"Here you go. Would you like to try it on?",accept:[/yes/i,/sure/i,/where.*(fitting|changing|dressing)/i,/no/i,/i'?ll take it/i],hint:"Yes, where is the fitting room? / I'll take it",errTr:"Denemek ister misiniz? «Yes, where is the fitting room?» veya «I'll take it» diyebilirsiniz."},
+  {ai:"How does it fit?",accept:[/it (fits|looks) .+/i,/it'?s (perfect|great|too big|too small|good|nice)/i,/a bit (big|small|tight|loose)/i,/i (like|love|don'?t like) it/i],hint:"It fits perfectly! / It's a bit too big",errTr:"Nasıl olduğunu söyleyin. «It fits perfectly!» veya «It's a bit too small» diyebilirsiniz."},
+  {ai:"How much is this?",accept:[/how much/i,/what'?s the price/i,/is (it|this|that) on sale/i,/any discount/i],hint:"How much is this? / Is there a discount?",errTr:"Fiyatı sorun. «How much is this?» veya «Is there a discount?» diyebilirsiniz.",aiFirst:true},
+  {ai:"That's 120 liras. Would you like to buy it?",accept:[/yes/i,/i'?ll take it/i,/no/i,/too expensive/i,/can i pay/i,/by (card|cash)/i],hint:"Yes, I'll take it! / Can I pay by card?",errTr:"Satın almak isteyip istemediğinizi söyleyin. «Yes, I'll take it!» veya «Can I pay by card?» diyebilirsiniz."},
+  {ai:"Here's your receipt. Thank you for shopping with us!",accept:[/thank/i,/thanks/i,/bye/i,/goodbye/i],hint:"Thank you! Goodbye!",errTr:"Teşekkür edin. «Thank you! Goodbye!» diyebilirsiniz."}
 ]}
 ];
 
@@ -3364,15 +3364,15 @@ function addCorrectionMessage(text){
   if(!chatBox)return;
   var div=document.createElement('div');
   div.className='chat-correction';
-  div.innerHTML='📝 '+text;
+  div.innerHTML='📝 '+text.replace(/«/g,"'").replace(/»/g,"'");
   chatBox.appendChild(div);
   div.scrollIntoView({behavior:'smooth',block:'end'});
-  // Speak: Turkish parts in Turkish voice, English parts (inside quotes) in English voice
+  // Speak: Turkish parts in Turkish voice, English parts (inside «») in English voice
   try{
     speechSynthesis.cancel();
     var clean=text.replace(/<[^>]+>/g,'');
-    // Split by quoted English examples
-    var parts=clean.split(/'/);
+    // Split by « and » markers
+    var parts=clean.split(/[«»]/);
     var queue=[];
     for(var i=0;i<parts.length;i++){
       var p=parts[i].trim();
@@ -3381,7 +3381,7 @@ function addCorrectionMessage(text){
         // Turkish text
         queue.push({text:p,lang:'tr-TR'});
       } else {
-        // English example (was inside quotes)
+        // English example (was inside «»)
         queue.push({text:p,lang:'en-US'});
       }
     }
