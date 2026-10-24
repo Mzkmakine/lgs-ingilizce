@@ -398,6 +398,15 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
 .sync-spinner { display:inline-block;width:12px;height:12px;border:2px solid rgba(14,116,144,0.3);border-top-color:#0E7490;border-radius:50%;animation:spin 0.6s linear infinite; }
 @keyframes spin { to{transform:rotate(360deg)} }
 
+.het-card{display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg);border:2px solid var(--border);border-radius:14px;cursor:pointer;transition:all 0.2s;margin-bottom:8px}
+.het-card:hover,.het-card:active{border-color:var(--primary);background:#ECFEFF}
+.het-icon{font-size:24px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#7C3AED,#A78BFA);border-radius:12px;color:#fff;font-weight:700;font-size:14px}
+.het-title{font-size:15px;font-weight:700;color:var(--text)}
+.het-sub{font-size:12px;color:var(--text-secondary);margin-top:2px}
+.het-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.het-stat-item{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center}
+.het-stat-num{font-size:22px;font-weight:800;color:var(--primary)}
+.het-stat-label{font-size:11px;color:var(--text-secondary);margin-top:4px}
 .pract-topic { display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg);border:2px solid var(--border);border-radius:14px;cursor:pointer;transition:all 0.2s;margin-bottom:8px; }
 .pract-topic:hover,.pract-topic:active { border-color:var(--primary);background:#ECFEFF; }
 .pract-topic-icon { font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0E7490,#22D3EE);border-radius:12px; }
@@ -519,10 +528,20 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
         <div class="menu-btn" onclick="showQuizMenu(0)"><div class="icon">✍️</div><div class="label">Quiz</div><div class="sublabel">7 mod</div></div>
         <div class="menu-btn" onclick="showLSMenu()"><div class="icon">🎧</div><div class="label">Dinle & Konuş</div><div class="sublabel">Dinleme + Konuşma</div></div>
         <div class="menu-btn" onclick="showPracticeMenu()"><div class="icon">💬</div><div class="label">Pratik</div><div class="sublabel">AI ile sohbet</div></div>
+        <div class="menu-btn" onclick="showHETMonths()"><div class="icon">📊</div><div class="label">Eğitim Takip</div><div class="sublabel">Haftalık rapor</div></div>
         <div class="menu-btn" onclick="showScreen('archive')"><div class="icon">💾</div><div class="label">Yedekleme</div><div class="sublabel">Export / Import</div></div>
         <div class="menu-btn" onclick="showScreen('grammar')"><div class="icon">📝</div><div class="label">Gramer</div><div class="sublabel">Konu anlatımı</div></div>
       </div>
     </div>
+  </div>
+
+  <!-- HET (Haftalık Eğitim Takip) -->
+  <div class="screen" id="screen-het">
+    <div class="header">
+      <button class="header-back" onclick="showScreen('dashboard')">‹</button>
+      <div class="header-title" id="het-header">Eğitim Takip</div>
+    </div>
+    <div class="card" id="het-container" style="padding:16px"></div>
   </div>
 
   <!-- PRACTICE -->
@@ -1012,7 +1031,7 @@ function markCorrect(id){
   const w=words[id];
   w.rank=Math.max(10,Math.round(w.rank*0.5));
   w.correctCount++;w.lastReviewed=new Date().toISOString();
-  DB.set('words',words);showToast('Rank: '+w.rank+' 📉');
+  DB.set('words',words);logActivity('word_review',{id:id,result:'correct'});showToast('Rank: '+w.rank+' 📉');
   // Auto-advance to next word
   setTimeout(function(){nextWord(id)},400);
 }
@@ -1020,7 +1039,7 @@ function markWrong(id){
   const w=words[id];
   w.rank=Math.min(200,w.rank+50);
   w.wrongCount++;w.lastReviewed=new Date().toISOString();
-  DB.set('words',words);showToast('Rank: '+w.rank+' 📈');
+  DB.set('words',words);logActivity('word_review',{id:id,result:'wrong'});showToast('Rank: '+w.rank+' 📈');
   // Stay on same word so student can review
   showWordDetail(id);
 }
@@ -1401,7 +1420,7 @@ function renderReadPassage(){
     var total=curRead.qs.length;
     var pct=Math.round(readQCorrect/total*100);
     readScores[curRead.id]={correct:readQCorrect,total:total,date:new Date().toISOString()};
-    DB.set('readScores',readScores);
+    DB.set('readScores',readScores);logActivity('reading_complete',{id:curRead.id,pct:pct});
     h+='<div style="text-align:center;padding:20px"><div style="font-size:40px;margin-bottom:8px">'+(pct>=80?'\ud83c\udfc6':'\ud83d\udcda')+'</div>'+
       '<div style="font-size:20px;font-weight:800">'+readQCorrect+'/'+total+' do\u011fru</div>'+
       '<div style="font-size:14px;color:var(--text-secondary);margin-top:4px">%'+pct+' ba\u015far\u0131</div>'+
@@ -1975,7 +1994,7 @@ renderQSummary=function(){
   if(qMode==='grammar'&&qDeck.length>0&&qDeck[0].grammarId){
     var gid=qDeck[0].grammarId;
     gramScores[gid]={correct:qCorrect,total:qCorrect+qWrong,lastPct:Math.round(qCorrect/(qCorrect+qWrong)*100),date:new Date().toISOString()};
-    DB.set('gramScores',gramScores);
+    DB.set('gramScores',gramScores);logActivity('grammar_complete',{id:gid});
   }
   origRenderQSummary();
 };
@@ -2053,6 +2072,7 @@ function showLSMenu(){
 
 // ===== LISTENING MODES =====
 function startListening(mode){
+  logActivity('listening',{mode:mode});
   try{
   lsMode=mode;lsIdx=0;lsCorrect=0;lsWrong=0;lsAnswered=false;lsSpeed=0.85;
   if(mode==='pattern'){
@@ -2173,6 +2193,7 @@ function answerListenQ(idx){
 // ===== SPEAKING MODES =====
 function startSpeaking(mode){
   if(!hasSpeechRecog){showToast('Konuşma tanıma desteklenmiyor');return}
+  logActivity('speaking',{mode:mode});
   lsMode='speak_'+mode;lsIdx=0;lsCorrect=0;lsWrong=0;lsSpeed=0.85;
   var pool=lsUnit?getWords(lsUnit):getAllWords();
   pool=shuffleArr(pool);
@@ -2479,7 +2500,7 @@ function renderArchive() {
 
 function collectData() {
   var data = {};
-  var keys = ['words','patterns','streak','fc_today','gramScores','readScores','quizScores'];
+  var keys = ['words','patterns','streak','fc_today','gramScores','readScores','quizScores','activityLog'];
   keys.forEach(function(k) {
     var val = DB.get(k, null);
     if (val !== null) data[k] = val;
@@ -2572,7 +2593,7 @@ function restoreData(data) {
   }
 
   var restored = 0;
-  var keys = ['words','patterns','streak','fc_today','gramScores','readScores','quizScores'];
+  var keys = ['words','patterns','streak','fc_today','gramScores','readScores','quizScores','activityLog'];
   keys.forEach(function(k) {
     if (data[k]) { DB.set(k, data[k]); restored++; }
   });
@@ -2606,7 +2627,7 @@ function confirmReset() {
 }
 
 function resetAllData() {
-  var keys = ['words','patterns','streak','fc_today','gramScores','readScores','quizScores'];
+  var keys = ['words','patterns','streak','fc_today','gramScores','readScores','quizScores','activityLog'];
   keys.forEach(function(k) {
     try { localStorage.removeItem('lgs_eng_' + k); } catch(e) {}
   });
@@ -2833,6 +2854,7 @@ function renderQSummary(){
   var qKey='u'+qUnit+'_'+Date.now();
   quizScores[qKey]={unit:qUnit,correct:qCorrect,total:total,pct:pctC,mode:qMode,date:new Date().toISOString()};
   DB.set('quizScores',quizScores);
+  logActivity('quiz_complete',{unit:qUnit,pct:pctC,mode:qMode});
   renderDashboard();
   var resHTML='';
   if(qMode==='exam'){
@@ -2934,7 +2956,7 @@ function markPatCorrect(id){
   var p=patterns[id];if(!p)return;
   p.rank=Math.max(10,Math.round(p.rank*0.5));
   p.correctCount++;p.lastReviewed=new Date().toISOString();
-  DB.set('patterns',patterns);showToast('Rank: '+p.rank+' 📉');
+  DB.set('patterns',patterns);logActivity('pattern_review',{id:id,result:'correct'});showToast('Rank: '+p.rank+' 📉');
   setTimeout(function(){nextPattern(id)},400);
 }
 
@@ -2942,7 +2964,7 @@ function markPatWrong(id){
   var p=patterns[id];if(!p)return;
   p.rank=Math.min(200,p.rank+50);
   p.wrongCount++;p.lastReviewed=new Date().toISOString();
-  DB.set('patterns',patterns);showToast('Rank: '+p.rank+' 📈');
+  DB.set('patterns',patterns);logActivity('pattern_review',{id:id,result:'wrong'});showToast('Rank: '+p.rank+' 📈');
   showPatternDetail(id);
 }
 
@@ -3301,6 +3323,176 @@ function showScreen(name){
 
 function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 
+// ===== ACTIVITY LOG =====
+function logActivity(type,data){
+  var log=DB.get('activityLog',[]);
+  log.push({type:type,data:data||{},ts:new Date().toISOString()});
+  // Keep last 2000 entries
+  if(log.length>2000)log=log.slice(-2000);
+  DB.set('activityLog',log);
+}
+
+// ===== HET (Haftalık Eğitim Takip) =====
+function getMonday(d){var day=d.getDay(),diff=d.getDate()-day+(day===0?-6:1);return new Date(d.getFullYear(),d.getMonth(),diff)}
+
+function showHETMonths(){
+  showScreen('het');
+  document.getElementById('het-header').textContent='📊 Eğitim Takip';
+  var now=new Date();
+  var year=now.getFullYear();
+  var months=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  var h='<div style="font-size:14px;color:var(--text-secondary);margin-bottom:12px">Bir ay seçerek haftalık çalışma raporunuzu görüntüleyin</div>';
+  // Show months from September to June (school year) + current year context
+  var startMonth=8; // September (0-indexed)
+  for(var i=0;i<12;i++){
+    var mIdx=(startMonth+i)%12;
+    var mYear=mIdx>=startMonth?year:year+1;
+    if(mYear>year+1)continue;
+    // Check if month is in the future
+    var monthEnd=new Date(mYear,mIdx+1,0);
+    if(monthEnd>new Date(year+1,7,1))continue; // Don't show past August next year
+    var isPast=monthEnd<now;
+    var isCurrent=now.getMonth()===mIdx&&now.getFullYear()===mYear;
+    var badge=isCurrent?' (Bu Ay)':'';
+    var borderStyle=isCurrent?'border-color:var(--primary);background:#ECFEFF':'';
+    h+='<div class="het-card" style="'+borderStyle+'" onclick="showHETWeeks('+mIdx+','+mYear+')">'+
+      '<div class="het-icon">'+months[mIdx].substring(0,3).toUpperCase()+'</div>'+
+      '<div style="flex:1"><div class="het-title">'+months[mIdx]+' '+mYear+badge+'</div>'+
+      '<div class="het-sub">Haftalık çalışma raporu</div></div>'+
+      '<div style="color:var(--text-secondary);font-size:18px">›</div></div>';
+  }
+  document.getElementById('het-container').innerHTML=h;
+}
+
+function showHETWeeks(month,year){
+  document.getElementById('het-header').textContent='📊 Haftalık Takip';
+  var months=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  var h='<div style="font-size:16px;font-weight:700;margin-bottom:4px">'+months[month]+' '+year+'</div>';
+  h+='<div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Hafta seçin</div>';
+
+  // Calculate weeks of the month
+  var firstDay=new Date(year,month,1);
+  var lastDay=new Date(year,month+1,0);
+  var weekNum=1;
+  var d=new Date(firstDay);
+  // Go to Monday of the first week
+  var mon=getMonday(new Date(d));
+
+  while(mon<=lastDay){
+    var sun=new Date(mon);sun.setDate(sun.getDate()+6);
+    var wStart=new Date(Math.max(mon.getTime(),firstDay.getTime()));
+    var wEnd=new Date(Math.min(sun.getTime(),lastDay.getTime()));
+
+    var startStr=wStart.getDate().toString().padStart(2,'0')+'.'+(wStart.getMonth()+1).toString().padStart(2,'0')+'.'+wStart.getFullYear();
+    var endStr=wEnd.getDate().toString().padStart(2,'0')+'.'+(wEnd.getMonth()+1).toString().padStart(2,'0')+'.'+wEnd.getFullYear();
+
+    var monISO=mon.getFullYear()+'-'+(mon.getMonth()+1).toString().padStart(2,'0')+'-'+mon.getDate().toString().padStart(2,'0');
+    var sunISO=sun.getFullYear()+'-'+(sun.getMonth()+1).toString().padStart(2,'0')+'-'+sun.getDate().toString().padStart(2,'0');
+
+    var now=new Date();
+    var isCurrent=now>=mon&&now<=sun;
+    var borderStyle=isCurrent?'border-color:var(--primary);background:#ECFEFF':'';
+
+    h+='<div class="het-card" style="'+borderStyle+'" onclick="showHETDetail(\''+monISO+'\',\''+sunISO+'\','+weekNum+','+month+','+year+')">'+
+      '<div class="het-icon" style="font-size:18px">'+weekNum+'</div>'+
+      '<div style="flex:1"><div class="het-title">'+weekNum+'. Hafta'+(isCurrent?' (Bu Hafta)':'')+'</div>'+
+      '<div class="het-sub">'+startStr+' - '+endStr+'</div></div>'+
+      '<div style="color:var(--text-secondary);font-size:18px">›</div></div>';
+
+    weekNum++;
+    mon.setDate(mon.getDate()+7);
+    if(weekNum>6)break;
+  }
+
+  h+='<button class="modal-btn outline" style="margin-top:8px" onclick="showHETMonths()">← Aylara Dön</button>';
+  document.getElementById('het-container').innerHTML=h;
+}
+
+function showHETDetail(monISO,sunISO,weekNum,month,year){
+  var months=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  document.getElementById('het-header').textContent=weekNum+'. Hafta Raporu';
+
+  var monDate=new Date(monISO+'T00:00:00');
+  var sunDate=new Date(sunISO+'T23:59:59');
+
+  // Gather stats from activity log
+  var log=DB.get('activityLog',[]);
+  var weekLog=log.filter(function(e){var t=new Date(e.ts);return t>=monDate&&t<=sunDate});
+
+  var wordCount=0,quizCount=0,patternCount=0,grammarCount=0,readingCount=0;
+  var listeningCount=0,speakingCount=0,practiceCount=0;
+
+  weekLog.forEach(function(e){
+    switch(e.type){
+      case 'word_review':wordCount++;break;
+      case 'quiz_complete':quizCount++;break;
+      case 'pattern_review':patternCount++;break;
+      case 'grammar_complete':grammarCount++;break;
+      case 'reading_complete':readingCount++;break;
+      case 'listening':listeningCount++;break;
+      case 'speaking':speakingCount++;break;
+      case 'practice_complete':practiceCount++;break;
+    }
+  });
+
+  // Also count from word lastReviewed dates
+  Object.values(words).forEach(function(w){
+    if(w.lastReviewed){
+      var d=new Date(w.lastReviewed);
+      if(d>=monDate&&d<=sunDate)wordCount++;
+    }
+  });
+
+  // Count from quizScores
+  var qs=DB.get('quizScores',{});
+  Object.values(qs).forEach(function(q){
+    if(q.date){var d=new Date(q.date);if(d>=monDate&&d<=sunDate)quizCount++}
+  });
+
+  // Count from gramScores
+  var gs=DB.get('gramScores',{});
+  Object.values(gs).forEach(function(g){
+    if(g.date){var d=new Date(g.date);if(d>=monDate&&d<=sunDate)grammarCount++}
+  });
+
+  // Count from readScores
+  var rs=DB.get('readScores',{});
+  Object.values(rs).forEach(function(r){
+    if(r.date){var d=new Date(r.date);if(d>=monDate&&d<=sunDate)readingCount++}
+  });
+
+  var startStr=monDate.getDate().toString().padStart(2,'0')+'.'+(monDate.getMonth()+1).toString().padStart(2,'0')+'.'+monDate.getFullYear();
+  var endStr=sunDate.getDate().toString().padStart(2,'0')+'.'+(sunDate.getMonth()+1).toString().padStart(2,'0')+'.'+sunDate.getFullYear();
+
+  var total=wordCount+quizCount+patternCount+grammarCount+readingCount+listeningCount+speakingCount+practiceCount;
+
+  var h='<div style="text-align:center;margin-bottom:16px">'+
+    '<div style="font-size:16px;font-weight:700">'+months[month]+' '+year+' — '+weekNum+'. Hafta</div>'+
+    '<div style="font-size:13px;color:var(--text-secondary)">'+startStr+' - '+endStr+'</div>'+
+    '<div style="font-size:40px;font-weight:800;color:var(--primary);margin:12px 0">'+total+'</div>'+
+    '<div style="font-size:13px;color:var(--text-secondary)">Toplam Aktivite</div></div>';
+
+  h+='<div class="het-stat-grid">'+
+    '<div class="het-stat-item"><div class="het-stat-num" style="color:#0E7490">'+wordCount+'</div><div class="het-stat-label">📖 Kelime Çalışma</div></div>'+
+    '<div class="het-stat-item"><div class="het-stat-num" style="color:#7C3AED">'+quizCount+'</div><div class="het-stat-label">✍️ Quiz Sınav</div></div>'+
+    '<div class="het-stat-item"><div class="het-stat-num" style="color:#D97706">'+patternCount+'</div><div class="het-stat-label">💬 Kalıp Çalışma</div></div>'+
+    '<div class="het-stat-item"><div class="het-stat-num" style="color:#059669">'+grammarCount+'</div><div class="het-stat-label">📝 Gramer</div></div>'+
+    '<div class="het-stat-item"><div class="het-stat-num" style="color:#2563EB">'+readingCount+'</div><div class="het-stat-label">📚 Okuma Pratiği</div></div>'+
+    '<div class="het-stat-item"><div class="het-stat-num" style="color:#DC2626">'+listeningCount+'</div><div class="het-stat-label">🎧 Dinleme</div></div>'+
+    '<div class="het-stat-item"><div class="het-stat-num" style="color:#9333EA">'+speakingCount+'</div><div class="het-stat-label">🎤 Konuşma</div></div>'+
+    '<div class="het-stat-item"><div class="het-stat-num" style="color:#0891B2">'+practiceCount+'</div><div class="het-stat-label">🤖 AI Pratik</div></div>'+
+  '</div>';
+
+  if(total===0){
+    h+='<div style="text-align:center;margin-top:16px;padding:16px;background:var(--bg);border-radius:12px">'+
+      '<div style="font-size:32px;margin-bottom:8px">📭</div>'+
+      '<div style="font-size:14px;color:var(--text-secondary)">Bu hafta henüz çalışma kaydı yok</div></div>';
+  }
+
+  h+='<button class="modal-btn outline" style="margin-top:16px" onclick="showHETWeeks('+month+','+year+')">← Haftalara Dön</button>';
+  document.getElementById('het-container').innerHTML=h;
+}
+
 // ===== PRACTICE (AI Conversation) =====
 var PRACTICE_TOPICS=[
 {id:'meeting',icon:'🤝',title:'Tanışma',sub:'İsim, yaş, hobi, ülke',
@@ -3515,6 +3707,7 @@ function checkPracticeAnswer(userText){
     practiceState.step++;
     if(practiceState.step>=topic.flow.length){
       // Conversation complete!
+      logActivity('practice_complete',{topic:topic.id});
       setTimeout(function(){
         var chatBox=document.getElementById('practice-chat');
         if(chatBox){
