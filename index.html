@@ -2901,13 +2901,61 @@ function showPatternDetail(id) {
         <div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px">Kullanım Durumu</div>
         <div style="font-size:13px">${p.situation}</div>
       </div>
-      <div class="modal-stats">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <button class="word-sound" onclick="speakPattern('${p.id}')" style="width:40px;height:40px;font-size:20px">🔊</button>
+        <span style="font-size:13px;color:var(--text-secondary)">Kalıbı dinle</span>
+      </div>
+      <div class="modal-stats" style="margin-bottom:12px">
         <div class="modal-stat"><div class="modal-stat-num" style="color:var(--success)">${p.correctCount}</div><div class="modal-stat-label">Doğru</div></div>
         <div class="modal-stat"><div class="modal-stat-num" style="color:var(--danger)">${p.wrongCount}</div><div class="modal-stat-label">Yanlış</div></div>
         <div class="modal-stat"><div class="modal-stat-num" style="color:var(--primary)">${p.rank}</div><div class="modal-stat-label">Rank</div></div>
       </div>
+      <button class="modal-btn primary" onclick="markPatCorrect('${p.id}')">✅ Biliyorum (Rank ×0.5)</button>
+      <button class="modal-btn outline" onclick="markPatWrong('${p.id}')">❌ Bilmiyorum (Rank +50)</button>
+      <button class="modal-btn outline" style="color:var(--primary);border-color:var(--primary);font-weight:700" onclick="nextPattern('${p.id}')">Sonraki Kalıp →</button>
     </div>`;
   document.getElementById('word-modal').classList.add('show');
+}
+
+function speakPattern(id){
+  var p=patterns[id];if(!p)return;
+  // Speak the pattern, then the dialog
+  speakText(p.pattern,0.8);
+  var dlgLines=p.dialog.split('\n').filter(function(l){return l.trim()});
+  var delay=2000;
+  dlgLines.forEach(function(line){
+    var clean=line.replace(/^[AB]:\s*/,'');
+    setTimeout(function(){speakText(clean,0.8)},delay);
+    delay+=3000;
+  });
+}
+
+function markPatCorrect(id){
+  var p=patterns[id];if(!p)return;
+  p.rank=Math.max(10,Math.round(p.rank*0.5));
+  p.correctCount++;p.lastReviewed=new Date().toISOString();
+  DB.set('patterns',patterns);showToast('Rank: '+p.rank+' 📉');
+  setTimeout(function(){nextPattern(id)},400);
+}
+
+function markPatWrong(id){
+  var p=patterns[id];if(!p)return;
+  p.rank=Math.min(200,p.rank+50);
+  p.wrongCount++;p.lastReviewed=new Date().toISOString();
+  DB.set('patterns',patterns);showToast('Rank: '+p.rank+' 📈');
+  showPatternDetail(id);
+}
+
+function nextPattern(id){
+  var p=patterns[id];if(!p)return;
+  var unitPats=getPatterns(p.unit);
+  var idx=-1;
+  for(var i=0;i<unitPats.length;i++){if(unitPats[i].id===id){idx=i;break}}
+  if(idx>=0&&idx<unitPats.length-1){
+    showPatternDetail(unitPats[idx+1].id);
+  } else {
+    closeModal();showToast('Ünitenin tüm kalıpları tamamlandı! 🎉');
+  }
 }
 
 function startPatternPractice(unitId, from) {
