@@ -1001,6 +1001,7 @@ function showWordDetail(id){
       </div>
       <button class="modal-btn primary" onclick="markCorrect('${w.id}')">✅ Biliyorum (Rank ×0.5)</button>
       <button class="modal-btn outline" onclick="markWrong('${w.id}')">❌ Bilmiyorum (Rank +50)</button>
+      <button class="modal-btn outline" style="color:var(--primary);border-color:var(--primary);font-weight:700" onclick="nextWord('${w.id}')">Sonraki Kelime →</button>
       ${w.userAdded?`<button class="modal-btn outline" style="color:var(--danger);border-color:var(--danger)" onclick="deleteWord('${w.id}')">🗑️ Sil</button>`:''}
     </div>`;
   document.getElementById('word-modal').classList.add('show');
@@ -1011,13 +1012,28 @@ function markCorrect(id){
   const w=words[id];
   w.rank=Math.max(10,Math.round(w.rank*0.5));
   w.correctCount++;w.lastReviewed=new Date().toISOString();
-  DB.set('words',words);showWordDetail(id);showToast('Rank: '+w.rank+' 📉');
+  DB.set('words',words);showToast('Rank: '+w.rank+' 📉');
+  // Auto-advance to next word
+  setTimeout(function(){nextWord(id)},400);
 }
 function markWrong(id){
   const w=words[id];
   w.rank=Math.min(200,w.rank+50);
   w.wrongCount++;w.lastReviewed=new Date().toISOString();
-  DB.set('words',words);showWordDetail(id);showToast('Rank: '+w.rank+' 📈');
+  DB.set('words',words);showToast('Rank: '+w.rank+' 📈');
+  // Stay on same word so student can review
+  showWordDetail(id);
+}
+function nextWord(id){
+  const w=words[id];if(!w)return;
+  const unitWords=getWords(w.unit);
+  var idx=-1;
+  for(var i=0;i<unitWords.length;i++){if(unitWords[i].id===id){idx=i;break}}
+  if(idx>=0&&idx<unitWords.length-1){
+    showWordDetail(unitWords[idx+1].id);
+  } else {
+    closeModal();showToast('Ünitenin tüm kelimeleri tamamlandı! 🎉');
+  }
 }
 
 // ===== ADD WORD =====
