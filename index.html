@@ -3367,12 +3367,36 @@ function addCorrectionMessage(text){
   div.innerHTML='📝 '+text;
   chatBox.appendChild(div);
   div.scrollIntoView({behavior:'smooth',block:'end'});
-  // Speak correction in Turkish
+  // Speak: Turkish parts in Turkish voice, English parts (inside quotes) in English voice
   try{
-    var u=new SpeechSynthesisUtterance(text.replace(/<[^>]+>/g,''));
-    u.lang='tr-TR';u.rate=0.9;
     speechSynthesis.cancel();
-    setTimeout(function(){speechSynthesis.speak(u)},500);
+    var clean=text.replace(/<[^>]+>/g,'');
+    // Split by quoted English examples
+    var parts=clean.split(/'/);
+    var queue=[];
+    for(var i=0;i<parts.length;i++){
+      var p=parts[i].trim();
+      if(!p)continue;
+      if(i%2===0){
+        // Turkish text
+        queue.push({text:p,lang:'tr-TR'});
+      } else {
+        // English example (was inside quotes)
+        queue.push({text:p,lang:'en-US'});
+      }
+    }
+    function speakQueue(idx){
+      if(idx>=queue.length)return;
+      var item=queue[idx];
+      var u=new SpeechSynthesisUtterance(item.text);
+      u.lang=item.lang;
+      u.rate=0.85;
+      if(item.lang==='en-US'&&usVoice)u.voice=usVoice;
+      u.onend=function(){speakQueue(idx+1)};
+      u.onerror=function(){speakQueue(idx+1)};
+      speechSynthesis.speak(u);
+    }
+    setTimeout(function(){speakQueue(0)},500);
   }catch(e){}
 }
 
