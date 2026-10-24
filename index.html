@@ -398,6 +398,29 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
 .sync-spinner { display:inline-block;width:12px;height:12px;border:2px solid rgba(14,116,144,0.3);border-top-color:#0E7490;border-radius:50%;animation:spin 0.6s linear infinite; }
 @keyframes spin { to{transform:rotate(360deg)} }
 
+.pract-topic { display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg);border:2px solid var(--border);border-radius:14px;cursor:pointer;transition:all 0.2s;margin-bottom:8px; }
+.pract-topic:hover,.pract-topic:active { border-color:var(--primary);background:#ECFEFF; }
+.pract-topic-icon { font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0E7490,#22D3EE);border-radius:12px; }
+.pract-topic-text { flex:1; }
+.pract-topic-title { font-size:15px;font-weight:700;color:var(--text); }
+.pract-topic-sub { font-size:12px;color:var(--text-secondary);margin-top:2px; }
+.chat-box { display:flex;flex-direction:column;gap:10px;margin-bottom:12px;min-height:200px; }
+.chat-bubble { max-width:85%;padding:12px 16px;border-radius:16px;font-size:14px;line-height:1.5;animation:fadeIn 0.3s; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.chat-ai { background:linear-gradient(135deg,#0E7490,#0891B2);color:#fff;border-bottom-left-radius:4px;align-self:flex-start; }
+.chat-user { background:#E0F2FE;color:var(--text);border-bottom-right-radius:4px;align-self:flex-end; }
+.chat-user.wrong { background:#FEE2E2;border:2px solid var(--danger); }
+.chat-user.correct { background:#D1FAE5;border:2px solid var(--success); }
+.chat-correction { background:#FEF3C7;color:#92400E;border-radius:12px;padding:10px 14px;font-size:13px;line-height:1.5;align-self:flex-start;max-width:90%; }
+.chat-input-area { display:flex;gap:8px;align-items:center;padding:8px 0; }
+.chat-input { flex:1;padding:12px 14px;border:2px solid var(--border);border-radius:24px;font-size:15px;font-family:Inter,sans-serif;outline:none;transition:border 0.2s; }
+.chat-input:focus { border-color:var(--primary); }
+.chat-send-btn { width:44px;height:44px;border:none;border-radius:50%;background:var(--primary);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center; }
+.chat-mic-btn { width:44px;height:44px;border:none;border-radius:50%;background:#059669;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center; }
+.chat-mic-btn.recording { background:var(--danger);animation:pulse 1s infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+.chat-hint { font-size:12px;color:var(--text-secondary);text-align:center;margin-top:4px; }
+
 .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--bg); padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 600; opacity: 0; transition: all 0.3s; z-index: 100; white-space: nowrap; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
@@ -495,10 +518,20 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
         <div class="menu-btn" onclick="startFlashcard(0)"><div class="icon">🗂️</div><div class="label">Flashcard</div><div class="sublabel">Tüm kelimeler</div></div>
         <div class="menu-btn" onclick="showQuizMenu(0)"><div class="icon">✍️</div><div class="label">Quiz</div><div class="sublabel">7 mod</div></div>
         <div class="menu-btn" onclick="showLSMenu()"><div class="icon">🎧</div><div class="label">Dinle & Konuş</div><div class="sublabel">Dinleme + Konuşma</div></div>
+        <div class="menu-btn" onclick="showPracticeMenu()"><div class="icon">💬</div><div class="label">Pratik</div><div class="sublabel">AI ile sohbet</div></div>
         <div class="menu-btn" onclick="showScreen('archive')"><div class="icon">💾</div><div class="label">Yedekleme</div><div class="sublabel">Export / Import</div></div>
         <div class="menu-btn" onclick="showScreen('grammar')"><div class="icon">📝</div><div class="label">Gramer</div><div class="sublabel">Konu anlatımı</div></div>
       </div>
     </div>
+  </div>
+
+  <!-- PRACTICE -->
+  <div class="screen" id="screen-practice">
+    <div class="header">
+      <button class="header-back" onclick="showScreen('dashboard')">‹</button>
+      <div class="header-title" id="practice-header">İngilizce Pratik</div>
+    </div>
+    <div class="card" id="practice-container" style="padding:16px"></div>
   </div>
 
   <!-- UNITS -->
@@ -3180,6 +3213,286 @@ function showScreen(name){
 }
 
 function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+// ===== PRACTICE (AI Conversation) =====
+var PRACTICE_TOPICS=[
+{id:'meeting',icon:'🤝',title:'Tanışma',sub:'İsim, yaş, hobi, ülke',
+ flow:[
+  {ai:"Hello! What's your name?",accept:[/my name is .+/i,/i'?m .+/i,/i am .+/i],hint:"My name is ... / I'm ...",errTr:"İsminizi söylemelisiniz. 'My name is Ali' veya 'I'm Ali' diyebilirsiniz."},
+  {ai:"Nice to meet you! How old are you?",accept:[/i'?m \d+/i,/i am \d+/i,/\d+ years old/i],hint:"I'm 14 / I am 14 years old",errTr:"Yaşınızı söyleyin. 'I'm 14' veya 'I am 14 years old' diyebilirsiniz."},
+  {ai:"Where are you from?",accept:[/i'?m from .+/i,/i am from .+/i,/i come from .+/i],hint:"I'm from Turkey / I come from ...",errTr:"Nereli olduğunuzu söyleyin. 'I'm from Turkey' diyebilirsiniz."},
+  {ai:"What do you like doing in your free time?",accept:[/i like .+ing/i,/i enjoy .+/i,/i love .+/i,/my hobby is/i,/my hobbies are/i],hint:"I like playing football / I enjoy reading",errTr:"Hobinizi söyleyin. 'I like playing football' veya 'I enjoy reading books' diyebilirsiniz."},
+  {ai:"Do you have any brothers or sisters?",accept:[/i have .+ (brother|sister|sibling)/i,/yes.*(i have|i do)/i,/no.*(i don'?t|i do not)/i,/i'?m an only child/i],hint:"Yes, I have a brother / No, I don't",errTr:"Kardeşiniz olup olmadığını söyleyin. 'I have one brother' veya 'No, I don't' diyebilirsiniz."},
+  {ai:"What's your favorite subject at school?",accept:[/my favorite .+ is .+/i,/i like .+/i,/i love .+/i,/it'?s .+/i],hint:"My favorite subject is English / I like math",errTr:"En sevdiğiniz dersi söyleyin. 'My favorite subject is English' diyebilirsiniz."},
+  {ai:"It was great talking to you! See you later!",accept:[/see you/i,/bye/i,/goodbye/i,/nice .+ you/i,/it was nice/i,/take care/i],hint:"See you later! / Nice talking to you too!",errTr:"Vedalaşın. 'See you later!' veya 'Goodbye!' diyebilirsiniz."}
+]},
+{id:'daily',icon:'☀️',title:'Günlük Yaşam',sub:'Rutin, hava, zaman',
+ flow:[
+  {ai:"Good morning! How are you today?",accept:[/i'?m (fine|good|great|okay|well)/i,/i am (fine|good|great)/i,/not bad/i,/pretty good/i],hint:"I'm fine, thank you / I'm great!",errTr:"Nasıl olduğunuzu söyleyin. 'I'm fine, thank you' veya 'I'm great!' diyebilirsiniz."},
+  {ai:"What time do you usually wake up?",accept:[/i (wake up|get up) at .+/i,/at \d+/i,/around \d+/i],hint:"I wake up at 7 o'clock / I get up at 7:30",errTr:"Kaçta kalktığınızı söyleyin. 'I wake up at 7 o'clock' diyebilirsiniz."},
+  {ai:"What do you have for breakfast?",accept:[/i (have|eat|drink) .+/i,/i usually .+/i],hint:"I have bread and cheese / I usually eat cereal",errTr:"Kahvaltıda ne yediğinizi söyleyin. 'I have bread and cheese for breakfast' diyebilirsiniz."},
+  {ai:"How do you go to school?",accept:[/i (go|walk|take|ride|travel) .+/i,/by (bus|car|bike|foot|train)/i,/on foot/i],hint:"I go by bus / I walk to school",errTr:"Okula nasıl gittiğinizi söyleyin. 'I go to school by bus' veya 'I walk to school' diyebilirsiniz."},
+  {ai:"What's the weather like today?",accept:[/it'?s (sunny|rainy|cloudy|cold|hot|warm|windy|snowy)/i,/it is .+/i,/the weather is .+/i],hint:"It's sunny / It's cold and rainy today",errTr:"Havayı tarif edin. 'It's sunny today' veya 'It's cold and cloudy' diyebilirsiniz."},
+  {ai:"What do you do after school?",accept:[/i (do|play|watch|read|study|go|have|practice) .+/i,/i usually .+/i,/after school.+i .+/i],hint:"I do my homework / I play football",errTr:"Okuldan sonra ne yaptığınızı söyleyin. 'I do my homework' veya 'I play football' diyebilirsiniz."},
+  {ai:"What time do you go to bed?",accept:[/i go to bed at .+/i,/at \d+/i,/around \d+/i,/i sleep at/i],hint:"I go to bed at 10 o'clock",errTr:"Kaçta yattığınızı söyleyin. 'I go to bed at 10 o'clock' diyebilirsiniz."}
+]},
+{id:'travel',icon:'✈️',title:'Seyahat',sub:'Bilet, yol tarifi, otel',
+ flow:[
+  {ai:"Welcome to the travel agency! Where would you like to go?",accept:[/i (want|would like|'d like) to go to .+/i,/i want to visit .+/i,/to .+/i],hint:"I'd like to go to London / I want to visit Paris",errTr:"Nereye gitmek istediğinizi söyleyin. 'I'd like to go to London' diyebilirsiniz."},
+  {ai:"When do you want to travel?",accept:[/in (january|february|march|april|may|june|july|august|september|october|november|december)/i,/next (week|month|summer|winter)/i,/on .+/i,/this .+/i],hint:"Next summer / In July / This weekend",errTr:"Ne zaman seyahat etmek istediğinizi söyleyin. 'Next summer' veya 'In July' diyebilirsiniz."},
+  {ai:"Would you like a single or return ticket?",accept:[/a? ?(single|return|one.?way|round.?trip)/i,/i'?d like a? ?(single|return)/i],hint:"A return ticket, please / I'd like a round trip",errTr:"Tek yön mü gidiş-dönüş mü istediğinizi söyleyin. 'A return ticket, please' diyebilirsiniz."},
+  {ai:"How many nights will you stay?",accept:[/\d+ night/i,/for \d+ (day|night|week)/i,/a week/i,/one week/i],hint:"Three nights / For a week",errTr:"Kaç gece kalacağınızı söyleyin. 'Three nights' veya 'For a week' diyebilirsiniz."},
+  {ai:"Do you need a hotel recommendation?",accept:[/yes/i,/no/i,/please/i,/sure/i,/that would be/i,/i do/i,/i don'?t/i],hint:"Yes, please / No, thank you",errTr:"'Yes, please' veya 'No, thank you' diyebilirsiniz."},
+  {ai:"Is there anything else I can help you with?",accept:[/no.*(thank|that)/i,/that'?s (all|it)/i,/nothing/i,/yes/i,/i need/i,/can you/i],hint:"No, that's all. Thank you! / That's it, thanks!",errTr:"'No, that's all. Thank you!' veya 'That's it, thanks!' diyebilirsiniz."}
+]},
+{id:'restaurant',icon:'🍽️',title:'Restoran',sub:'Sipariş, menü, hesap',
+ flow:[
+  {ai:"Good evening! Welcome to our restaurant. Table for how many?",accept:[/for (one|two|three|four|\d+)/i,/table for (one|two|three|\d+)/i,/just (me|one|myself)/i,/(one|two|three|four|\d+) (people|person)/i],hint:"Table for two, please / For two people",errTr:"Kaç kişilik masa istediğinizi söyleyin. 'Table for two, please' diyebilirsiniz."},
+  {ai:"Here's the menu. Are you ready to order?",accept:[/yes/i,/i'?d like/i,/can i (have|get|order)/i,/i (want|will have)/i,/not yet/i,/a (few|couple) (more )?minute/i],hint:"Yes, I'd like to order / Can I have a few more minutes?",errTr:"Sipariş vermeye hazır mısınız söyleyin. 'Yes, I'd like to order' veya 'Can I have a few more minutes?' diyebilirsiniz."},
+  {ai:"What would you like to eat?",accept:[/i'?d like .+/i,/i (want|will have|'ll have) .+/i,/can i (have|get) .+/i],hint:"I'd like a hamburger / Can I have pasta, please?",errTr:"Ne yemek istediğinizi söyleyin. 'I'd like a hamburger' veya 'Can I have pasta, please?' diyebilirsiniz."},
+  {ai:"And what would you like to drink?",accept:[/i'?d like .+/i,/can i (have|get) .+/i,/i (want|will have|'ll have) .+/i,/(water|juice|cola|tea|coffee|milk|lemonade)/i],hint:"I'd like orange juice / Can I have water, please?",errTr:"Ne içmek istediğinizi söyleyin. 'I'd like orange juice' veya 'Water, please' diyebilirsiniz."},
+  {ai:"How is your food? Is everything okay?",accept:[/it'?s (delicious|great|good|wonderful|nice|amazing|perfect|very good)/i,/yes.*(it'?s|everything)/i,/very (good|nice|tasty)/i,/i (like|love|enjoy) it/i],hint:"It's delicious, thank you! / Everything is great!",errTr:"Yemek hakkında yorum yapın. 'It's delicious, thank you!' veya 'Everything is great!' diyebilirsiniz."},
+  {ai:"Would you like any dessert?",accept:[/yes/i,/no/i,/i'?d like .+/i,/can i have .+/i,/no.*(thank|i'?m full)/i],hint:"Yes, I'd like chocolate cake / No, thank you. I'm full.",errTr:"Tatlı isteyip istemediğinizi söyleyin. 'Yes, I'd like chocolate cake' veya 'No, thank you. I'm full' diyebilirsiniz."},
+  {ai:"Here's your bill. That's 85 liras.",accept:[/here you (go|are)/i,/thank you/i,/thanks/i,/can i pay/i,/by (card|cash|credit)/i,/keep the change/i],hint:"Thank you! / Can I pay by card?",errTr:"Teşekkür edin veya ödeme yöntemi sorun. 'Thank you!' veya 'Can I pay by card?' diyebilirsiniz."}
+]},
+{id:'cafe',icon:'☕',title:'Kafe',sub:'İçecek siparişi, sohbet',
+ flow:[
+  {ai:"Hi! Welcome to the café. What can I get you?",accept:[/i'?d like .+/i,/can i (have|get) .+/i,/i (want|will have|'ll have) .+/i,/a (coffee|tea|latte|cappuccino|hot chocolate)/i],hint:"I'd like a coffee, please / Can I have a latte?",errTr:"Ne içmek istediğinizi söyleyin. 'I'd like a coffee, please' diyebilirsiniz."},
+  {ai:"What size would you like? Small, medium, or large?",accept:[/(small|medium|large|big)/i,/a (small|medium|large)/i],hint:"Medium, please / I'd like a large one",errTr:"Boyut seçin. 'Medium, please' veya 'Large, please' diyebilirsiniz."},
+  {ai:"Would you like anything to eat with that?",accept:[/yes/i,/no/i,/a (cake|cookie|sandwich|muffin|croissant|brownie)/i,/i'?d like .+/i,/no.*(thank|i'?m)/i],hint:"Yes, a chocolate muffin / No, just the drink, thanks",errTr:"Yanında yemek ister misiniz? 'A chocolate muffin, please' veya 'No, thanks' diyebilirsiniz."},
+  {ai:"For here or to go?",accept:[/for here/i,/to go/i,/take ?away/i,/here/i,/i'?ll (sit|stay|eat) here/i],hint:"For here, please / To go, please",errTr:"Burada mı yoksa paket mi? 'For here, please' veya 'To go, please' diyebilirsiniz."},
+  {ai:"That'll be 45 liras. How would you like to pay?",accept:[/by (card|cash|credit)/i,/(card|cash)/i,/with (card|cash|credit)/i,/here you/i,/credit card/i],hint:"By card, please / Cash, please",errTr:"Ödeme yönteminizi söyleyin. 'By card, please' veya 'Cash, please' diyebilirsiniz."},
+  {ai:"Here's your order. Enjoy!",accept:[/thank/i,/thanks/i,/cheers/i],hint:"Thank you! / Thanks a lot!",errTr:"Teşekkür edin. 'Thank you!' diyebilirsiniz."}
+]},
+{id:'customs',icon:'🛃',title:'Gümrük',sub:'Pasaport, vize, beyan',
+ flow:[
+  {ai:"Good morning. Passport, please.",accept:[/here (you go|you are|it is)/i,/here/i,/sure/i,/of course/i],hint:"Here you go / Here it is",errTr:"Pasaportunuzu verin. 'Here you go' veya 'Here it is' diyebilirsiniz."},
+  {ai:"What is the purpose of your visit?",accept:[/i'?m here (for|on) .+/i,/(holiday|vacation|tourism|business|study|visit)/i,/i'?m (a tourist|visiting|traveling)/i,/for (holiday|business|study)/i],hint:"I'm here on holiday / For tourism / I'm visiting my family",errTr:"Ziyaret amacınızı söyleyin. 'I'm here on holiday' veya 'For tourism' diyebilirsiniz."},
+  {ai:"How long will you be staying?",accept:[/\d+ (day|week|month|night)/i,/for \d+/i,/a (week|month|few days)/i,/(two|three|four|five|six|seven)/i],hint:"For two weeks / Five days",errTr:"Ne kadar kalacağınızı söyleyin. 'For two weeks' veya 'Five days' diyebilirsiniz."},
+  {ai:"Where will you be staying?",accept:[/at (a|the) .+/i,/in (a|the) .+/i,/(hotel|hostel|friend|family|airbnb)/i,/i'?m staying (at|in|with) .+/i],hint:"At a hotel / I'm staying with my family",errTr:"Nerede kalacağınızı söyleyin. 'At a hotel in the city center' veya 'I'm staying with my family' diyebilirsiniz."},
+  {ai:"Do you have anything to declare?",accept:[/no/i,/nothing/i,/i (don'?t|do not) (have|think so)/i,/yes.+i have/i],hint:"No, nothing to declare / No, I don't",errTr:"Beyan edecek bir şeyiniz var mı? 'No, nothing to declare' diyebilirsiniz."},
+  {ai:"Welcome. Enjoy your stay!",accept:[/thank/i,/thanks/i,/cheers/i],hint:"Thank you very much!",errTr:"Teşekkür edin. 'Thank you very much!' diyebilirsiniz."}
+]},
+{id:'airport',icon:'🛫',title:'Havaalanı',sub:'Check-in, uçuş, bagaj',
+ flow:[
+  {ai:"Good morning. Can I see your ticket and passport?",accept:[/here (you go|you are|it is|they are)/i,/here/i,/sure/i,/of course/i],hint:"Here you go / Sure, here they are",errTr:"Bilet ve pasaportunuzu verin. 'Here you go' diyebilirsiniz."},
+  {ai:"Would you like a window or an aisle seat?",accept:[/(window|aisle)/i,/i'?d (like|prefer) .*(window|aisle)/i,/a (window|aisle) (seat|one)/i],hint:"A window seat, please / I'd like an aisle seat",errTr:"Pencere mi koridor mu istiyorsunuz? 'A window seat, please' veya 'An aisle seat, please' diyebilirsiniz."},
+  {ai:"How many bags are you checking in?",accept:[/(one|two|three|1|2|3|just one|no bags|none)/i,/i have .+ bag/i],hint:"Just one / Two bags / None, just hand luggage",errTr:"Kaç çanta kayıt ettireceğinizi söyleyin. 'Just one' veya 'Two bags' diyebilirsiniz."},
+  {ai:"Your flight is boarding at Gate B7. Have a nice flight!",accept:[/thank/i,/thanks/i,/which way/i,/where is gate/i,/how do i get/i],hint:"Thank you! / Which way is Gate B7?",errTr:"Teşekkür edin veya kapıyı sorun. 'Thank you!' veya 'Which way is Gate B7?' diyebilirsiniz."},
+  {ai:"Excuse me, the flight is delayed by 30 minutes. Can I get you anything while you wait?",accept:[/no.*(thank|i'?m|that)/i,/a (coffee|water|drink|tea|juice)/i,/can i have/i,/i'?d like/i,/how long/i,/when will/i],hint:"No, thank you / Can I have a coffee? / When will we board?",errTr:"Beklerken bir şey ister misiniz? 'No, thank you' veya 'Can I have a coffee?' diyebilirsiniz."},
+  {ai:"We're now boarding. Please have your boarding pass ready.",accept:[/here (you go|it is)/i,/ok/i,/sure/i,/thank/i,/ready/i],hint:"Here you go / Sure, I'm ready",errTr:"Biniş kartınızı hazırlayın. 'Here you go' veya 'Sure, I'm ready' diyebilirsiniz."}
+]},
+{id:'shopping',icon:'🛍️',title:'Mağaza',sub:'Fiyat, beden, ödeme',
+ flow:[
+  {ai:"Hello! Can I help you with anything?",accept:[/i'?m looking for .+/i,/yes.*(i need|i'?m looking|i want)/i,/no.*(just looking|browsing|thank)/i,/do you have .+/i],hint:"I'm looking for a T-shirt / Yes, I need a jacket",errTr:"Ne aradığınızı söyleyin. 'I'm looking for a T-shirt' veya 'Just looking, thanks' diyebilirsiniz."},
+  {ai:"What size do you need?",accept:[/(small|medium|large|extra large|xs|s|m|l|xl|xxl)/i,/size \d+/i,/i (need|wear|am) .*(small|medium|large|\d+)/i],hint:"Medium, please / I need size 40 / Large",errTr:"Bedeninizi söyleyin. 'Medium, please' veya 'Size 40' diyebilirsiniz."},
+  {ai:"Here you go. Would you like to try it on?",accept:[/yes/i,/sure/i,/where.*(fitting|changing|dressing)/i,/no/i,/i'?ll take it/i],hint:"Yes, where is the fitting room? / I'll take it",errTr:"Denemek ister misiniz? 'Yes, where is the fitting room?' veya 'I'll take it' diyebilirsiniz."},
+  {ai:"How does it fit?",accept:[/it (fits|looks) .+/i,/it'?s (perfect|great|too big|too small|good|nice)/i,/a bit (big|small|tight|loose)/i,/i (like|love|don'?t like) it/i],hint:"It fits perfectly! / It's a bit too big",errTr:"Nasıl olduğunu söyleyin. 'It fits perfectly!' veya 'It's a bit too small' diyebilirsiniz."},
+  {ai:"How much is this?",accept:[/how much/i,/what'?s the price/i,/is (it|this|that) on sale/i,/any discount/i],hint:"How much is this? / Is there a discount?",errTr:"Fiyatı sorun. 'How much is this?' veya 'Is there a discount?' diyebilirsiniz.",aiFirst:true},
+  {ai:"That's 120 liras. Would you like to buy it?",accept:[/yes/i,/i'?ll take it/i,/no/i,/too expensive/i,/can i pay/i,/by (card|cash)/i],hint:"Yes, I'll take it! / Can I pay by card?",errTr:"Satın almak isteyip istemediğinizi söyleyin. 'Yes, I'll take it!' veya 'Can I pay by card?' diyebilirsiniz."},
+  {ai:"Here's your receipt. Thank you for shopping with us!",accept:[/thank/i,/thanks/i,/bye/i,/goodbye/i],hint:"Thank you! Goodbye!",errTr:"Teşekkür edin. 'Thank you! Goodbye!' diyebilirsiniz."}
+]}
+];
+
+var practiceState={topic:null,step:0,recording:false,recog:null,chatHistory:[]};
+
+function showPracticeMenu(){
+  showScreen('practice');
+  document.getElementById('practice-header').textContent='İngilizce Pratik';
+  var h='<div style="font-size:14px;color:var(--text-secondary);margin-bottom:12px">Bir konu seçin ve AI ile İngilizce sohbet pratiği yapın 💬</div>';
+  PRACTICE_TOPICS.forEach(function(t){
+    h+='<div class="pract-topic" onclick="startPractice(\''+t.id+'\')">'+
+      '<div class="pract-topic-icon">'+t.icon+'</div>'+
+      '<div class="pract-topic-text"><div class="pract-topic-title">'+t.title+'</div><div class="pract-topic-sub">'+t.sub+'</div></div>'+
+      '<div style="color:var(--text-secondary);font-size:18px">›</div></div>';
+  });
+  document.getElementById('practice-container').innerHTML=h;
+}
+
+function startPractice(topicId){
+  var topic=PRACTICE_TOPICS.find(function(t){return t.id===topicId});
+  if(!topic)return;
+  practiceState={topic:topic,step:0,recording:false,recog:null,chatHistory:[]};
+  document.getElementById('practice-header').textContent=topic.icon+' '+topic.title;
+  renderPracticeChat();
+  // AI speaks first
+  setTimeout(function(){
+    addAIMessage(topic.flow[0].ai);
+  },500);
+}
+
+function renderPracticeChat(){
+  var topic=practiceState.topic;
+  var step=practiceState.step;
+  var flow=topic.flow[step];
+
+  var h='<div class="chat-box" id="practice-chat"></div>';
+  h+='<div class="chat-input-area">'+
+    '<input class="chat-input" id="practice-input" placeholder="İngilizce yazın..." onkeydown="if(event.key===\'Enter\')sendPracticeMsg()">'+
+    '<button class="chat-mic-btn" id="practice-mic" onclick="togglePracticeMic()">🎤</button>'+
+    '<button class="chat-send-btn" onclick="sendPracticeMsg()">➤</button>'+
+  '</div>';
+  if(flow)h+='<div class="chat-hint" id="practice-hint">💡 İpucu: <em>'+flow.hint+'</em></div>';
+
+  document.getElementById('practice-container').innerHTML=h;
+}
+
+function addAIMessage(text){
+  var chatBox=document.getElementById('practice-chat');
+  if(!chatBox)return;
+  var div=document.createElement('div');
+  div.className='chat-bubble chat-ai';
+  div.innerHTML='🤖 '+text;
+  chatBox.appendChild(div);
+  div.scrollIntoView({behavior:'smooth',block:'end'});
+  // Speak it
+  speakText(text,0.8);
+}
+
+function addUserMessage(text,isCorrect){
+  var chatBox=document.getElementById('practice-chat');
+  if(!chatBox)return;
+  var div=document.createElement('div');
+  div.className='chat-bubble chat-user'+(isCorrect?' correct':' wrong');
+  div.textContent=text;
+  chatBox.appendChild(div);
+  div.scrollIntoView({behavior:'smooth',block:'end'});
+}
+
+function addCorrectionMessage(text){
+  var chatBox=document.getElementById('practice-chat');
+  if(!chatBox)return;
+  var div=document.createElement('div');
+  div.className='chat-correction';
+  div.innerHTML='📝 '+text;
+  chatBox.appendChild(div);
+  div.scrollIntoView({behavior:'smooth',block:'end'});
+  // Speak correction in Turkish
+  try{
+    var u=new SpeechSynthesisUtterance(text.replace(/<[^>]+>/g,''));
+    u.lang='tr-TR';u.rate=0.9;
+    speechSynthesis.cancel();
+    setTimeout(function(){speechSynthesis.speak(u)},500);
+  }catch(e){}
+}
+
+function sendPracticeMsg(){
+  var input=document.getElementById('practice-input');
+  if(!input)return;
+  var text=input.value.trim();
+  if(!text)return;
+  input.value='';
+  checkPracticeAnswer(text);
+}
+
+function checkPracticeAnswer(userText){
+  var topic=practiceState.topic;
+  var step=practiceState.step;
+  if(step>=topic.flow.length)return;
+  var flow=topic.flow[step];
+
+  // Check against accepted patterns
+  var correct=false;
+  for(var i=0;i<flow.accept.length;i++){
+    if(flow.accept[i].test(userText)){correct=true;break}
+  }
+
+  addUserMessage(userText,correct);
+
+  if(correct){
+    // Move to next step
+    practiceState.step++;
+    if(practiceState.step>=topic.flow.length){
+      // Conversation complete!
+      setTimeout(function(){
+        var chatBox=document.getElementById('practice-chat');
+        if(chatBox){
+          var div=document.createElement('div');
+          div.style.cssText='text-align:center;padding:20px;';
+          div.innerHTML='<div style="font-size:40px;margin-bottom:8px">🎉</div>'+
+            '<div style="font-size:18px;font-weight:700;color:var(--success)">Tebrikler!</div>'+
+            '<div style="font-size:14px;color:var(--text-secondary);margin:8px 0">'+topic.title+' konuşmasını başarıyla tamamladınız!</div>'+
+            '<button onclick="showPracticeMenu()" style="padding:12px 24px;border:none;border-radius:12px;background:var(--primary);color:#fff;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px">← Konulara Dön</button>';
+          chatBox.appendChild(div);
+          div.scrollIntoView({behavior:'smooth',block:'end'});
+        }
+        // Hide input area
+        var inputArea=document.querySelector('.chat-input-area');
+        if(inputArea)inputArea.style.display='none';
+        var hintEl=document.getElementById('practice-hint');
+        if(hintEl)hintEl.style.display='none';
+      },800);
+    } else {
+      // Next AI message
+      var nextFlow=topic.flow[practiceState.step];
+      setTimeout(function(){
+        addAIMessage(nextFlow.ai);
+        // Update hint
+        var hintEl=document.getElementById('practice-hint');
+        if(hintEl)hintEl.innerHTML='💡 İpucu: <em>'+nextFlow.hint+'</em>';
+      },1200);
+    }
+  } else {
+    // Show correction in Turkish + correct English
+    addCorrectionMessage(flow.errTr);
+    // Let user try again - don't advance step
+  }
+}
+
+function togglePracticeMic(){
+  if(practiceState.recording){
+    if(practiceState.recog)try{practiceState.recog.stop()}catch(e){}
+    practiceState.recording=false;
+    var btn=document.getElementById('practice-mic');
+    if(btn)btn.classList.remove('recording');
+    return;
+  }
+
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){showToast('Konuşma tanıma desteklenmiyor');return}
+
+  // Request mic permission first
+  if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+      stream.getTracks().forEach(function(t){t.stop()});
+      startPracticeRecog(SR);
+    }).catch(function(err){
+      showToast('Mikrofon izni reddedildi');
+    });
+  } else {
+    startPracticeRecog(SR);
+  }
+}
+
+function startPracticeRecog(SR){
+  var recog=new SR();
+  recog.lang='en-US';
+  recog.interimResults=false;
+  recog.maxAlternatives=3;
+  practiceState.recog=recog;
+  practiceState.recording=true;
+
+  var btn=document.getElementById('practice-mic');
+  if(btn)btn.classList.add('recording');
+
+  recog.onresult=function(e){
+    var spoken=e.results[0][0].transcript;
+    var input=document.getElementById('practice-input');
+    if(input)input.value=spoken;
+    checkPracticeAnswer(spoken);
+  };
+  recog.onerror=function(e){
+    practiceState.recording=false;
+    if(btn)btn.classList.remove('recording');
+    if(e.error==='no-speech')showToast('Ses algılanamadı, tekrar deneyin');
+    else showToast('Mikrofon hatası: '+e.error);
+  };
+  recog.onend=function(){
+    practiceState.recording=false;
+    if(btn)btn.classList.remove('recording');
+  };
+  recog.start();
+}
 
 // ===== INIT (Standalone - localStorage only) =====
 function updateCloudStatus(){}
